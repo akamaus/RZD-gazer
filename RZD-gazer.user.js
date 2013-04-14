@@ -4,6 +4,7 @@
 // @description Отслеживает появление билетов на RZD
 // @include     https://ticket.rzd.ru/pass/secure/*
 // @include     http://ticket.rzd.ru/pass/secure/*
+// @include     http://ticket.rzd.ru/pass/public/logon
 // @version     1.2
 // ==/UserScript==
 
@@ -12,6 +13,12 @@ $(document).ready(function() {
   setTimeout(make_test, 10000);
   
   function make_test() {
+    if ($('table.LogonTableForm').length) { // логинимся
+      console.log('logging in');
+      $('input#other').click();
+      return;
+    }
+    
     console.log("len " + $('div.errorMessageDiv').length);
     if (($("div.dateNavig").length == 0) || ($('div.errorMessageDiv').length >= 1)) {
       console.log("issuing reload");
