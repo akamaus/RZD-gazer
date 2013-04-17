@@ -11,12 +11,17 @@
 $(document).ready(function() {
   
   setTimeout(make_test, 10000);
-  
+
   function make_test() {
-    if ($('table.LogonTableForm').length) { // логинимся
+    if ($('input.stdButton').length) { // логинимся (1ый вариант экрана
+      console.log('logging in');
+      $('input.stdButton').click();
+      return;
+    }
+    
+    if ($('table.LogonTableForm').length) { // логинимся (2ой вариант экрана)
       console.log('logging in');
       $('input#other').click();
-      return;
     }
     
     console.log("len " + $('div.errorMessageDiv').length);
