@@ -14,16 +14,9 @@ $(document).ready(function() {
   setTimeout(make_test, 10000);
 
   function make_test() {
-      if ($('input.stdButton').length) { // логинимся (1ый вариант экрана
-      console.log('logging in');
-      $('input.stdButton').click();
-      return;
-    }
-
-    if ($('table.LogonTableForm').length) { // логинимся (2ой вариант экрана)
-      console.log('logging in');
-      $('input#other').click();
-    }
+    test_login("input.stdButton");
+    test_login("table.LogonTableForm", "input#other");
+    test_login("button[value='Вход']");
 
     if ($('div.errorMessageDiv').length >= 1) {
         issue_reload();
@@ -86,6 +79,14 @@ $(document).ready(function() {
     if (wagon_found)
         issue_alarm();
     else issue_reload();
+  }
+
+  function test_login(test, button) {
+    if ($(test).length) {
+        console.log('logging in');
+        button = button || test;
+        $(button).click();
+    }
   }
 
   function issue_alarm() {
