@@ -2,8 +2,7 @@
 // @name        RZD-gazer
 // @namespace   http://vyal.ru/rzd-gazer
 // @description Отслеживает появление билетов на RZD
-// @include     https://ticket.rzd.ru/pass/secure/*
-// @include     http://ticket.rzd.ru/pass/secure/*
+// @include     http://pass.rzd.ru/timetable/*
 // @include     http://ticket.rzd.ru/pass/public/logon
 // @version     1.2
 // ==/UserScript==
@@ -27,7 +26,7 @@ $(document).ready(function() {
 
     switch(section) {
     case 'Выборпоезда':
-        test_train();
+        test_train(2200);
         break;
     case 'Выборвагона':
         test_wagon();
@@ -37,7 +36,7 @@ $(document).ready(function() {
     }
   }
 
-  function test_train() {
+  function test_train(max_price = null) {
     var target_trains = ["№ 7040","№ 7040Х", "№ 7042","№ 7042Х"];
 
     var train_found = false;
@@ -54,7 +53,17 @@ $(document).ready(function() {
           console.log("train " + train + " detected");
           if ( $("table.trlist__table-price", this).length > 0) {
               console.log("tickets for train " + train + " available");
-              train_found = true;
+              if (max_price) {
+                  $("table.trlist__table-price td.trlist__table-price__price span", this).each(function() {
+                      price = parseInt($(this).text().split(' ')[0]);
+                      console.log('found price' + price);
+                      if (price < max_price) {
+                          train_found = true;
+                      }
+                  });
+              } else {
+                  train_found = true;
+              }
           }
       }
     });
