@@ -38,7 +38,7 @@ $(document).ready(function() {
   }
 
   function test_train() {
-    var target_trains = ["№ 7044"];
+    var target_trains = ["№ 7040","№ 7040Х", "№ 7042","№ 7042Х"];
 
     var train_found = false;
 
