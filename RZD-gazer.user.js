@@ -3,11 +3,14 @@
 // @namespace   http://vyal.ru/rzd-gazer
 // @description Отслеживает появление билетов на RZD
 // @include     https://pass.rzd.ru/tickets/public/*
-// @version     1.2
+// @version     1.3
 // @grant       none
+// @require     http://code.jquery.com/jquery-3.4.1.min.js
 // ==/UserScript==
 
-console.log('hello gazer');
+
+console.log('hello gazer!');
+
 
 function issue_alarm() {
   console.log("issuing alarm");
@@ -29,15 +32,51 @@ function issue_alarm() {
 }
 
 function do_alarm() {
-  var snd = new Audio("http://www.lunerouge.org/sons/engins/LRObject%20falling%2001%20by%20Lionel%20Allorge.ogg");
-  snd.play();
   console.log("beep!");
+  var snd = new Audio("https://www.freesoundslibrary.com/wp-content/uploads/2020/02/frog-sound-effect.mp3");
+  snd.play();
 };
 
 function issue_reload() {
   console.log("issuing reload");
   setTimeout(function() { window.location.reload(); }, 120 * 1000);
 }
+
+
+function test_train(max_price = null) {
+    var target_trains = ["7050", "7044", "7098"]; // ["7044Х"] // ["7044","7098"]; //["7044","7098", "7042","№ 7042Х"];
+    var forbidden_trains = ["№ 030Ч", "№ 064Б", "№ 096Б" ];
+
+    var train_found = false;
+
+    console.log("Testing trains");
+    $('div.j-train').each(function() {
+      var train = $('span.route-trnum', this).html().trim().split(/\s+/)[0];
+      console.log('train', train);
+
+      if ((target_trains.length == 0 || $.inArray(train, target_trains) > -1)
+        && $.inArray(train, forbidden_trains) == -1) {
+
+        console.log('checking train: ' + train);
+
+        $('span.route-cartype-price-rub', this).each(function() {
+          var cost = parseInt($(this).text());
+          console.log('cost=' + cost);
+          if (!max_price || cost < max_price) {
+            train_found = true;
+          }
+        });
+       }
+    });
+
+    if (train_found) {
+      console.log("seat found!");
+      issue_alarm();
+    } else {
+      issue_reload();
+    }
+} 
+
 
 $(document).ready(function() {
   console.log("RZD-gazer is active");
@@ -50,56 +89,10 @@ $(document).ready(function() {
     });
   }
 
-  function test_train(max_price = null) {
-    var target_trains = ["7044","7098"]; //["7044","7098", "7042","№ 7042Х"];
-    var forbidden_trains = ["№ 030Ч", "№ 064Б", "№ 096Б" ];
-
-    var train_found = false;
-
-    console.log("Hello");
-    $("div.j-train").each(function() {
-      var train = $("div.train-info__train_number", this).html().trim().split(/\s+/)[0];
-
-      if ((target_trains.length == 0 || $.inArray(train, target_trains) > -1)
-        && $.inArray(train, forbidden_trains) == -1) {
-
-        console.log('checking train: ' + train);
-
-        $("div.car-type__cost", this).each(function() {
-          var cost = parseInt($(this).text().split(/\s+/)[2]);
-          console.log('cost=' + cost);
-          if (!max_price || cost < max_price) {
-            train_found = true;
-          }
-        })
-
-//      if (train=="") return;
-      //         if (max_price) {
-      //             $("table.trlist__table-price td.trlist__table-price__price span", this).each(function() {
-      //                 price = parseInt($(this).text().split(' ')[0]);
-      //                 console.log('found price' + price);
-      //                 if (price < max_price) {
-      //                     train_found = true;
-      //                 }
-      //             });
-      //         } else {
-      //             train_found = true;
-      //         }
-      //     }
-      // }
-      }
-    });
-
-    if (train_found) {
-      console.log("seat found!");
-      issue_alarm()
-    } else {
-      issue_reload();
-    }
-  }
-
   test_train(3000);
+  
 })
+
 
 
 shim_GM_notification ()
@@ -150,3 +143,4 @@ function shim_GM_notification () {
         }
     }
 }
+
